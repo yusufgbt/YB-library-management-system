@@ -27,6 +27,16 @@ ui.add_head_html(
         --q-success: #22c55e; /* green-500 */
         --q-warning: #f97316; /* orange-500 */
         --q-error: #ef4444; /* red-500 */
+        
+        /* Yeni tema renkleri */
+        --q-purple: #8b5cf6; /* violet-500 */
+        --q-pink: #ec4899; /* pink-500 */
+        --q-cyan: #06b6d4; /* cyan-500 */
+        --q-indigo: #6366f1; /* indigo-500 */
+        --q-teal: #14b8a6; /* teal-500 */
+        --q-orange: #f97316; /* orange-500 */
+        --q-red: #ef4444; /* red-500 */
+        --q-yellow: #eab308; /* yellow-500 */
       }
       
       /* Modern gradient arka plan */
@@ -34,77 +44,191 @@ ui.add_head_html(
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         min-height: 100vh;
         font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        transition: all 0.5s ease;
       }
       
-      /* Card gölgeleri */
+      /* Card gölgeleri ve animasyonlar */
       .q-card {
         box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-        border-radius: 16px;
-        backdrop-filter: blur(10px);
+        border-radius: 20px;
+        backdrop-filter: blur(15px);
         background: rgba(255, 255, 255, 0.95);
         border: 1px solid rgba(255, 255, 255, 0.2);
-        transition: all 0.3s ease;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        overflow: hidden;
       }
       
       .q-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        transform: translateY(-8px) scale(1.02);
+        box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2);
       }
       
-      /* Button animasyonları */
+      .q-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, var(--q-primary), var(--q-secondary));
+        transform: scaleX(0);
+        transition: transform 0.3s ease;
+      }
+      
+      .q-card:hover::before {
+        transform: scaleX(1);
+      }
+      
+      /* Button animasyonları ve stilleri */
       .q-btn {
-        border-radius: 12px;
+        border-radius: 15px;
         font-weight: 600;
-        transition: all 0.3s ease;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         text-transform: none;
         letter-spacing: 0.5px;
+        position: relative;
+        overflow: hidden;
+      }
+      
+      .q-btn::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+        transition: left 0.5s;
+      }
+      
+      .q-btn:hover::before {
+        left: 100%;
       }
       
       .q-btn:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        transform: translateY(-3px) scale(1.05);
+        box-shadow: 0 12px 25px rgba(0, 0, 0, 0.25);
       }
       
       /* Header güzelleştirme */
       .q-header {
-        background: rgba(255, 255, 255, 0.95);
-        backdrop-filter: blur(20px);
-        border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        background: linear-gradient(135deg, rgba(59, 130, 246, 0.95) 0%, rgba(16, 185, 129, 0.95) 100%);
+        backdrop-filter: blur(30px);
+        border-bottom: 2px solid rgba(255, 255, 255, 0.3);
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
+        border-radius: 0 0 30px 30px;
+        position: relative;
+        overflow: hidden;
+      }
+      
+      .q-header::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(45deg, 
+          rgba(255, 255, 255, 0.1) 0%, 
+          rgba(255, 255, 255, 0.05) 50%, 
+          rgba(255, 255, 255, 0.1) 100%);
+        animation: shimmer 3s ease-in-out infinite;
+      }
+      
+      @keyframes shimmer {
+        0%, 100% { transform: translateX(-100%); }
+        50% { transform: translateX(100%); }
+      }
+      
+      .q-header * {
+        position: relative;
+        z-index: 1;
+      }
+      
+      /* Header içindeki butonlar */
+      .q-header .q-btn {
+        background: rgba(255, 255, 255, 0.2);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        color: white;
+        font-weight: 600;
+        transition: all 0.3s ease;
+      }
+      
+      .q-header .q-btn:hover {
+        background: rgba(255, 255, 255, 0.3);
+        border-color: rgba(255, 255, 255, 0.5);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+      }
+      
+      /* Header içindeki ikonlar */
+      .q-header .q-icon {
+        color: white;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+      }
+      
+      /* Header içindeki label'lar */
+      .q-header .q-label {
+        color: white;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        font-weight: 600;
       }
       
       /* Table güzelleştirme */
       .q-table {
-        border-radius: 16px;
+        border-radius: 20px;
         overflow: hidden;
-        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+        border: 1px solid rgba(255, 255, 255, 0.1);
       }
       
       .q-table th {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: linear-gradient(135deg, var(--q-primary), var(--q-secondary));
         color: white;
         font-weight: 600;
+        padding: 16px;
+        font-size: 14px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+      }
+      
+      .q-table tr:nth-child(even) {
+        background: rgba(59, 130, 246, 0.05);
+      }
+      
+      .q-table tr:hover {
+        background: rgba(59, 130, 246, 0.1);
+        transform: scale(1.01);
+        transition: all 0.2s ease;
       }
       
       /* Input güzelleştirme */
       .q-input {
-        border-radius: 12px;
+        border-radius: 15px;
         transition: all 0.3s ease;
+        border: 2px solid transparent;
       }
       
       .q-input:focus-within {
         transform: scale(1.02);
-        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15);
+        border-color: var(--q-primary);
       }
       
       /* Chip güzelleştirme */
       .q-chip {
         border-radius: 20px;
-        font-weight: 600;
-        padding: 8px 16px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
       }
       
-      /* Animasyonlar */
+      .q-chip:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+      }
+      
+      /* Özel animasyonlar */
       @keyframes fadeInUp {
         from {
           opacity: 0;
@@ -116,23 +240,73 @@ ui.add_head_html(
         }
       }
       
-      .fade-in-up {
+      @keyframes slideInLeft {
+        from {
+          opacity: 0;
+          transform: translateX(-30px);
+        }
+        to {
+          opacity: 1;
+          transform: translateX(0);
+        }
+      }
+      
+      @keyframes pulse {
+        0%, 100% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.05);
+        }
+      }
+      
+      .animate-fade-in {
         animation: fadeInUp 0.6s ease-out;
       }
+      
+      .animate-slide-in {
+        animation: slideInLeft 0.6s ease-out;
+      }
+      
+      .animate-pulse {
+        animation: pulse 2s infinite;
+      }
+      
+
       
       /* Responsive tasarım */
       @media (max-width: 768px) {
         .q-card {
-          margin: 8px;
-          border-radius: 12px;
+          margin: 10px;
+          border-radius: 15px;
         }
         
-        .q-btn {
-          padding: 8px 16px;
-          font-size: 14px;
+        .q-table {
+          font-size: 12px;
         }
       }
+      
+      /* Loading animasyonu */
+      .loading-spinner {
+        width: 40px;
+        height: 40px;
+        border: 4px solid rgba(59, 130, 246, 0.1);
+        border-left: 4px solid var(--q-primary);
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+      }
+      
+      @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
     </style>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     """
 )
 
@@ -197,9 +371,9 @@ def init_db() -> None:
         cursor.execute("SELECT COUNT(1) FROM users WHERE username = 'admin';")
         (exists_admin,) = cursor.fetchone()
         if not exists_admin:
-            salt = secrets.token_hex(16)
-            password = "admin123"
-            password_hash = hashlib.sha256((salt + password).encode()).hexdigest()
+            salt = generate_salt()
+            password = "Admin123!"  # Daha güçlü şifre
+            password_hash = hash_password(password, salt)
             cursor.execute(
                 "INSERT INTO users (username, password_hash, salt, is_admin) VALUES (?, ?, ?, 1);",
                 ("admin", password_hash, salt),
@@ -212,10 +386,12 @@ def init_db() -> None:
 # ----------------------
 
 
-def list_books() -> List[sqlite3.Row]:
+def list_books() -> List[Dict[str, Any]]:
     with closing(get_connection()) as connection, closing(connection.cursor()) as cursor:
         cursor.execute("SELECT * FROM books ORDER BY id DESC;")
-        return cursor.fetchall()
+        rows = cursor.fetchall()
+        # sqlite3.Row'ları dictionary'e çevir
+        return [dict(row) for row in rows]
 
 
 # ----------------------
@@ -313,10 +489,12 @@ def delete_book(book_id: int) -> None:
         connection.commit()
 
 
-def list_members() -> List[sqlite3.Row]:
+def list_members() -> List[Dict[str, Any]]:
     with closing(get_connection()) as connection, closing(connection.cursor()) as cursor:
         cursor.execute("SELECT * FROM members ORDER BY id DESC;")
-        return cursor.fetchall()
+        rows = cursor.fetchall()
+        # sqlite3.Row'ları dictionary'e çevir
+        return [dict(row) for row in rows]
 
 
 def create_member(name: str, email: Optional[str], phone: Optional[str]) -> None:
@@ -348,7 +526,7 @@ def delete_member(member_id: int) -> None:
         connection.commit()
 
 
-def list_available_books() -> List[sqlite3.Row]:
+def list_available_books() -> List[Dict[str, Any]]:
     with closing(get_connection()) as connection, closing(connection.cursor()) as cursor:
         cursor.execute(
             """
@@ -361,10 +539,12 @@ def list_available_books() -> List[sqlite3.Row]:
             ORDER BY b.title COLLATE NOCASE;
             """
         )
-        return cursor.fetchall()
+        rows = cursor.fetchall()
+        # sqlite3.Row'ları dictionary'e çevir
+        return [dict(row) for row in rows]
 
 
-def list_active_loans() -> List[sqlite3.Row]:
+def list_active_loans() -> List[Dict[str, Any]]:
     with closing(get_connection()) as connection, closing(connection.cursor()) as cursor:
         cursor.execute(
             """
@@ -385,7 +565,9 @@ def list_active_loans() -> List[sqlite3.Row]:
             ORDER BY lo.id DESC;
             """
         )
-        return cursor.fetchall()
+        rows = cursor.fetchall()
+        # sqlite3.Row'ları dictionary'e çevir
+        return [dict(row) for row in rows]
 
 
 def create_loan(book_id: int, member_id: int, loan_date_str: str, due_date_str: str) -> None:
@@ -421,7 +603,31 @@ def get_user_by_username(username: str) -> Optional[sqlite3.Row]:
 
 
 def verify_password(plain_password: str, salt: str, password_hash: str) -> bool:
+    """Şifre doğrulama - salt + şifre kombinasyonunu hash'leyerek karşılaştırır"""
     return hashlib.sha256((salt + plain_password).encode()).hexdigest() == password_hash
+
+
+def hash_password(plain_password: str, salt: str) -> str:
+    """Şifreyi hash'ler - salt + şifre kombinasyonunu SHA-256 ile hash'ler"""
+    return hashlib.sha256((salt + plain_password).encode()).hexdigest()
+
+
+def generate_salt() -> str:
+    """Güvenli salt oluşturur"""
+    return secrets.token_hex(16)
+
+
+def is_password_strong(password: str) -> bool:
+    """Şifre gücünü kontrol eder"""
+    if len(password) < 8:
+        return False
+    if not any(c.isupper() for c in password):
+        return False
+    if not any(c.islower() for c in password):
+        return False
+    if not any(c.isdigit() for c in password):
+        return False
+    return True
 
 
 def current_user() -> Optional[Dict[str, Any]]:
@@ -442,40 +648,41 @@ def require_login(next_path: str) -> bool:
 
 
 def nav_header() -> None:
-    with ui.header().classes("items-center justify-between px-6 py-3"):
-        with ui.row().classes("items-center gap-3"):
-            ui.icon("menu_book").classes("text-primary text-h4")
-            ui.label("📚 Kütüphane").classes("text-h5 font-bold text-primary")
+    with ui.header().classes("items-center justify-between px-8 py-4"):
+        with ui.row().classes("items-center gap-4"):
+            ui.icon("fas fa-book-open").classes("text-white text-h3 animate-pulse")
+            ui.label("📚 YB LIBRARY MANAGEMENT SYSTEM").classes("text-h5 font-bold text-white")
         
-        with ui.row().classes("gap-3 items-center"):
-            ui.button("🏠 Ana Sayfa", on_click=lambda: ui.navigate.to("/"), icon="home").props("flat").classes("font-medium")
-            ui.button("📖 Kitaplar", on_click=lambda: ui.navigate.to("/books"), icon="library_books").props("flat").classes("font-medium")
-            ui.button("👥 Üyeler", on_click=lambda: ui.navigate.to("/members"), icon="group").props("flat").classes("font-medium")
-            ui.button("🔄 Ödünç", on_click=lambda: ui.navigate.to("/loans"), icon="sync_alt").props("flat").classes("font-medium")
+        with ui.row().classes("gap-4 items-center"):
+            ui.button("🏠 Ana Sayfa", on_click=lambda: ui.navigate.to("/"), icon="fas fa-home").props("flat").classes("font-medium text-white")
+            ui.button("📖 Kitaplar", on_click=lambda: ui.navigate.to("/books"), icon="fas fa-books").props("flat").classes("font-medium text-white")
+            ui.button("👥 Üyeler", on_click=lambda: ui.navigate.to("/members"), icon="fas fa-users").props("flat").classes("font-medium text-white")
+            ui.button("🔄 Ödünç", on_click=lambda: ui.navigate.to("/loans"), icon="fas fa-exchange-alt").props("flat").classes("font-medium text-white")
             
-            ui.separator().props("vertical").classes("mx-2")
+            ui.separator().props("vertical").classes("mx-3 bg-white")
             
-            dark = ui.dark_mode()
-            ui.button(icon="dark_mode", on_click=dark.toggle).props("round flat").classes("ml-2")
+
             
             if current_user():
-                ui.separator().props("vertical").classes("mx-2")
-                with ui.row().classes("items-center gap-2 bg-blue-1 px-3 py-1 rounded-full"):
-                    ui.icon("person").classes("text-primary")
-                    ui.label(current_user()["username"]).classes("font-medium text-primary")  # type: ignore[index]
-                ui.button("🚪 Çıkış", icon="logout", on_click=lambda: ui.navigate.to("/logout")).props("flat").classes("font-medium")
+                ui.separator().props("vertical").classes("mx-3 bg-white")
+                with ui.row().classes("items-center gap-2 bg-white bg-opacity-90 px-4 py-2 rounded-full backdrop-blur-sm"):
+                    ui.icon("fas fa-user").classes("text-slate-800")
+                    ui.label(current_user()["username"]).classes("text-slate-800 font-medium")  # type: ignore[index]
+                ui.button("🚪 Çıkış", icon="fas fa-sign-out-alt", on_click=lambda: ui.navigate.to("/logout")).props("flat").classes("font-medium text-slate-800")
             else:
-                ui.button("🔑 Giriş", icon="login", on_click=lambda: ui.navigate.to("/login")).props("flat").classes("font-medium bg-primary text-white")
+                ui.button("🔑 Giriş", icon="fas fa-sign-in-alt", on_click=lambda: ui.navigate.to("/login")).props("flat").classes("font-medium bg-white bg-opacity-20 text-white border border-white border-opacity-30")
+    
+
 
 
 def app_footer() -> None:
     with ui.footer().classes("justify-center py-4 text-center"):
         with ui.row().classes("items-center gap-2 justify-center"):
             ui.icon("favorite").classes("text-red-5")
-            ui.label("© 2025 Kütüphane Uygulaması").classes("font-medium")
+            ui.label("© 2025 YB Library Management System").classes("font-medium")
             ui.icon("code").classes("text-blue-5")
             ui.label("NiceGUI + SQLite").classes("font-medium text-blue-7")
-        ui.label("Modern kütüphane yönetimi için tasarlandı").classes("text-caption text-grey-6 mt-1")
+        ui.label("Modern library management designed for excellence").classes("text-caption text-grey-6 mt-1")
 
 
 def create_book_dialog(existing: Optional[sqlite3.Row] = None, on_saved: Optional[Any] = None) -> None:
@@ -570,73 +777,80 @@ def create_member_dialog(existing: Optional[sqlite3.Row] = None, on_saved: Optio
 def index_page() -> None:
     nav_header()
     
-    # Hero section
-    with ui.card().classes("m-4 max-w-[1000px] text-center fade-in-up"):
-        ui.icon("menu_book").classes("text-primary text-h1 mb-4")
-        ui.label("📚 Kütüphane Yönetim Sistemi").classes("text-h3 font-bold text-primary mb-2")
-        ui.label("Modern ve kullanıcı dostu kütüphane yönetim platformu").classes("text-subtitle1 text-grey-7 mb-6")
+    # Ana container - merkezi hizalama için
+    with ui.column().classes("items-center w-full max-w-[1200px] mx-auto"):
         
-        # İstatistik kartları
-        with ui.row().classes("justify-center gap-4 mb-6"):
-            with ui.card().classes("text-center p-4 min-w-[120px] bg-blue-1"):
-                ui.icon("library_books").classes("text-primary text-h4 mb-2")
-                ui.label("Kitaplar").classes("text-h6 font-bold")
-                ui.label("Yönetim").classes("text-caption")
+        # Hero section - tam genişlik
+        with ui.card().classes("w-full text-center animate-fade-in mb-8"):
+            ui.icon("fas fa-book-open").classes("text-primary text-h1 mb-6 animate-pulse")
+            ui.label("📚 YB LIBRARY MANAGEMENT SYSTEM").classes("text-h3 font-bold text-primary mb-3")
+            ui.label("Modern ve kullanıcı dostu kütüphane yönetim platformu").classes("text-subtitle1 text-grey-7 mb-8")
             
-            with ui.card().classes("text-center p-4 min-w-[120px] bg-green-1"):
-                ui.icon("group").classes("text-secondary text-h4 mb-2")
-                ui.label("Üyeler").classes("text-h6 font-bold")
-                ui.label("Takip").classes("text-caption")
+            # İstatistik kartları - eşit boyutlarda ve simetrik
+            with ui.row().classes("justify-center gap-6 mb-8 w-full"):
+                with ui.card().classes("text-center p-6 flex-1 max-w-[200px] bg-gradient-to-br from-blue-50 to-blue-100 hover:from-blue-100 hover:to-blue-200 transition-all duration-300 shadow-lg hover:shadow-xl border border-blue-200"):
+                    ui.icon("fas fa-books").classes("text-primary text-h3 mb-3")
+                    ui.label("Kitaplar").classes("text-h5 font-bold text-blue-800")
+                    ui.label("Yönetim").classes("text-caption text-blue-600")
+                
+                with ui.card().classes("text-center p-6 flex-1 max-w-[200px] bg-gradient-to-br from-green-50 to-green-100 hover:from-green-100 hover:to-green-200 transition-all duration-300 shadow-lg hover:shadow-xl border border-green-200"):
+                    ui.icon("fas fa-users").classes("text-secondary text-h3 mb-3")
+                    ui.label("Üyeler").classes("text-h5 font-bold text-green-800")
+                    ui.label("Takip").classes("text-caption text-green-600")
+                
+                with ui.card().classes("text-center p-6 flex-1 max-w-[200px] bg-gradient-to-br from-orange-50 to-orange-100 hover:from-orange-100 hover:to-orange-200 transition-all duration-300 shadow-lg hover:shadow-xl border border-orange-200"):
+                    ui.icon("fas fa-exchange-alt").classes("text-accent text-h3 mb-3")
+                    ui.label("Ödünç").classes("text-h5 font-bold text-orange-800")
+                    ui.label("İşlemler").classes("text-caption text-orange-600")
             
-            with ui.card().classes("text-center p-4 min-w-[120px] bg-orange-1"):
-                ui.icon("sync_alt").classes("text-accent text-h4 mb-2")
-                ui.label("Ödünç").classes("text-h6 font-bold")
-                ui.label("İşlemler").classes("text-caption")
+            # Ana butonlar - eşit boyutlarda ve simetrik
+            with ui.row().classes("justify-center gap-6 flex-wrap w-full"):
+                ui.button(
+                    "📖 Kitapları Yönet", 
+                    on_click=lambda: ui.navigate.to("/books"), 
+                    color="primary", 
+                    icon="fas fa-book"
+                ).classes("min-w-[220px] h-12 text-h6 font-medium animate-pulse shadow-lg hover:shadow-xl")
+                
+                ui.button(
+                    "👥 Üyeleri Yönet", 
+                    on_click=lambda: ui.navigate.to("/members"), 
+                    color="secondary", 
+                    icon="fas fa-user-friends"
+                ).classes("min-w-[220px] h-12 text-h6 font-medium animate-pulse shadow-lg hover:shadow-xl")
+                
+                ui.button(
+                    "🔄 Ödünç / İade", 
+                    on_click=lambda: ui.navigate.to("/loans"), 
+                    color="accent", 
+                    icon="fas fa-sync-alt"
+                ).classes("min-w-[220px] h-12 text-h6 font-medium animate-pulse shadow-lg hover:shadow-xl")
         
-        # Ana butonlar
-        with ui.row().classes("justify-center gap-4 flex-wrap"):
-            ui.button(
-                "📖 Kitapları Yönet", 
-                on_click=lambda: ui.navigate.to("/books"), 
-                color="primary", 
-                icon="library_books",
-                size="lg"
-            ).classes("min-w-[200px]")
+        # Özellikler bölümü - tam genişlik
+        with ui.card().classes("w-full animate-slide-in mb-8"):
+            ui.label("✨ Özellikler").classes("text-h5 font-bold text-center mb-6 text-grey-8")
             
-            ui.button(
-                "👥 Üyeleri Yönet", 
-                on_click=lambda: ui.navigate.to("/members"), 
-                color="secondary", 
-                icon="group",
-                size="lg"
-            ).classes("min-w-[200px]")
-            
-            ui.button(
-                "🔄 Ödünç / İade", 
-                on_click=lambda: ui.navigate.to("/loans"), 
-                color="accent", 
-                icon="sync_alt",
-                size="lg"
-            ).classes("min-w-[200px]")
-    
-    # Özellikler bölümü
-    with ui.card().classes("m-4 max-w-[1000px] fade-in-up"):
-        ui.label("✨ Özellikler").classes("text-h5 font-bold text-center mb-4")
-        with ui.row().classes("gap-4 flex-wrap justify-center"):
-            with ui.card().classes("text-center p-4 min-w-[200px] bg-blue-1"):
-                ui.icon("search").classes("text-primary text-h3 mb-2")
-                ui.label("Hızlı Arama").classes("text-subtitle1 font-bold")
-                ui.label("Kitapları ve üyeleri anında bulun").classes("text-caption")
-            
-            with ui.card().classes("text-center p-4 min-w-[200px] bg-green-1"):
-                ui.icon("security").classes("text-secondary text-h3 mb-2")
-                ui.label("Güvenli Giriş").classes("text-subtitle1 font-bold")
-                ui.label("Şifreli kullanıcı yönetimi").classes("text-caption")
-            
-            with ui.card().classes("text-center p-4 min-w-[200px] bg-orange-1"):
-                ui.icon("analytics").classes("text-accent text-h3 mb-2")
-                ui.label("Detaylı Raporlar").classes("text-subtitle1 font-bold")
-                ui.label("Ödünç ve iade takibi").classes("text-caption")
+            # Özellik kartları - 3'lü grid düzeni
+            with ui.row().classes("gap-6 flex-wrap justify-center w-full"):
+                with ui.card().classes("text-center p-6 flex-1 max-w-[300px] bg-gradient-to-br from-blue-50 to-blue-100 hover:from-blue-100 hover:to-blue-200 transition-all duration-300 shadow-lg hover:shadow-xl border border-blue-200 min-h-[200px] flex flex-col justify-center"):
+                    ui.icon("fas fa-search").classes("text-primary text-h2 mb-4")
+                    ui.label("Hızlı Arama").classes("text-h6 font-bold text-blue-800 mb-2")
+                    ui.label("Kitapları ve üyeleri anında bulun").classes("text-caption text-blue-600")
+                
+                with ui.card().classes("text-center p-6 flex-1 max-w-[300px] bg-gradient-to-br from-green-50 to-green-100 hover:from-green-100 hover:to-green-200 transition-all duration-300 shadow-lg hover:shadow-xl border border-green-200 min-h-[200px] flex flex-col justify-center"):
+                    ui.icon("fas fa-shield-alt").classes("text-secondary text-h2 mb-4")
+                    ui.label("Güvenli Giriş").classes("text-h6 font-bold text-green-800 mb-2")
+                    ui.label("Şifreli kullanıcı yönetimi").classes("text-caption text-green-600")
+                
+                with ui.card().classes("text-center p-6 flex-1 max-w-[300px] bg-gradient-to-br from-orange-50 to-orange-100 hover:from-orange-100 hover:to-orange-200 transition-all duration-300 shadow-lg hover:shadow-xl border border-orange-200 min-h-[200px] flex flex-col justify-center"):
+                    ui.icon("fas fa-chart-bar").classes("text-accent text-h2 mb-4")
+                    ui.label("Detaylı Raporlar").classes("text-h6 font-bold text-orange-800 mb-2")
+                    ui.label("Ödünç ve iade takibi").classes("text-caption text-orange-600")
+        
+        # Alt bilgi kartı - tam genişlik
+        with ui.card().classes("w-full text-center bg-gradient-to-r from-grey-50 to-grey-100 border border-grey-200"):
+            ui.label("🚀 YB Library Management System").classes("text-h6 font-bold text-grey-8 mb-2")
+            ui.label("Profesyonel kütüphane yönetimi için tasarlandı").classes("text-caption text-grey-6")
     
     app_footer()
 
@@ -653,12 +867,6 @@ def books_page() -> None:
             ui.label("📚 Kitaplar").classes("text-h4 font-bold text-primary")
             ui.chip(f"Toplam: {len(list_books())} kitap").props("color=primary text-color=white")
         
-        # Arama ve butonlar
-        with ui.row().classes("items-center gap-4 mb-4"):
-            search_input = ui.input("🔍 Başlık / Yazar / ISBN ara").props("clearable").classes("w-[400px]")
-            ui.button("➕ Yeni Kitap", on_click=lambda: create_book_dialog(on_saved=refresh_table), color="primary", icon="add").classes("font-medium")
-            ui.button("📚 Klasikleri İçe Aktar", on_click=do_import, icon="library_add").classes("font-medium bg-secondary")
-        
         def do_import() -> None:
             added = import_classics()
             if added:
@@ -666,6 +874,12 @@ def books_page() -> None:
             else:
                 ui.notify("ℹ️ Yeni eklenecek klasik kitap bulunamadı", type="warning")
             refresh_table()
+        
+        # Arama ve butonlar
+        with ui.row().classes("items-center gap-4 mb-4"):
+            search_input = ui.input("🔍 Başlık / Yazar / ISBN ara").props("clearable").classes("w-[400px]")
+            ui.button("➕ Yeni Kitap", on_click=lambda: create_book_dialog(on_saved=refresh_table), color="primary", icon="add").classes("font-medium")
+            ui.button("📚 Klasikleri İçe Aktar", on_click=do_import, icon="library_add").classes("font-medium bg-secondary")
 
     def refresh_table() -> None:
         rows: List[Dict[str, Any]] = []
@@ -711,7 +925,6 @@ def books_page() -> None:
                     on_click=lambda r=row: create_book_dialog(
                         existing=_get_book_by_id(r["id"]), on_saved=refresh_table
                     ),
-                    size="sm",
                     icon="edit",
                     color="primary",
                 ).classes("font-medium")
@@ -722,7 +935,6 @@ def books_page() -> None:
                         lambda: _delete_book_ui(r["id"], refresh_table),
                     ),
                     color="negative",
-                    size="sm",
                     icon="delete",
                 ).classes("font-medium")
 
@@ -755,7 +967,12 @@ def members_page() -> None:
     nav_header()
     if not require_login("/members"):
         return
-    ui.label("Üyeler").classes("text-h6 m-4")
+    ui.label("👥 Üyeler (Şifreler Hash'lenmiş)").classes("text-h6 m-4")
+    
+    # Hash bilgisi
+    with ui.card().classes("bg-green-1 p-3 mb-4"):
+        ui.label("🔒 Şifreler SHA-256 ile hash'lenmiş").classes("text-caption text-green-8")
+        ui.label("📱 E-posta ve telefon numaraları normal metin olarak gösterilir").classes("text-caption text-green-8")
 
     search_input = ui.input("İsim / E-posta ara").props("clearable").classes("m-4 w-[400px]")
 
@@ -765,7 +982,7 @@ def members_page() -> None:
         for m in list_members():
             if term and all(
                 term not in (str(m[k]) if m[k] is not None else "").lower()
-                for k in ("name", "email")
+                for k in ("name", "email", "phone")
             ):
                 continue
             rows.append(
@@ -774,6 +991,7 @@ def members_page() -> None:
                     "name": m["name"],
                     "email": m["email"] or "-",
                     "phone": m["phone"] or "-",
+                    "password_hash": m["password_hash"] or "-",
                 }
             )
         table.rows = rows
@@ -786,10 +1004,19 @@ def members_page() -> None:
         {"name": "name", "label": "Ad Soyad", "field": "name", "align": "left", "sortable": True},
         {"name": "email", "label": "E-posta", "field": "email", "align": "left"},
         {"name": "phone", "label": "Telefon", "field": "phone", "align": "left"},
+        {"name": "password_hash", "label": "Şifreler", "field": "password_hash", "align": "left"},
         {"name": "actions", "label": "İşlemler", "field": "actions", "align": "left"},
     ]
 
     table = ui.table(columns=columns, rows=[]).props('flat dense row-key="id" rows-per-page-options="[5,10,25,50]"').classes("m-4")
+
+    with table.add_slot("body-cell-password_hash"):
+        def password_hash_cell(row: Dict[str, Any]) -> None:  # type: ignore[override]
+            if row["password_hash"] and row["password_hash"] != "-":
+                with ui.tooltip(f"Hash uzunluğu: {len(row['password_hash'])} karakter"):
+                    ui.code(row["password_hash"][:20] + "...").classes("text-xs bg-grey-2 px-2 py-1 rounded")
+            else:
+                ui.label("-").classes("text-grey-6")
 
     with table.add_slot("body-cell-actions"):
         def actions_cell(row: Dict[str, Any]) -> None:  # type: ignore[override]
@@ -799,7 +1026,6 @@ def members_page() -> None:
                     on_click=lambda r=row: create_member_dialog(
                         existing=_get_member_by_id(r["id"]), on_saved=refresh_table
                     ),
-                    size="sm",
                     icon="edit",
                 )
                 ui.button(
@@ -809,7 +1035,6 @@ def members_page() -> None:
                         lambda: _delete_member_ui(r["id"], refresh_table),
                     ),
                     color="negative",
-                    size="sm",
                     icon="delete",
                 )
 
@@ -830,6 +1055,23 @@ def members_page() -> None:
 
     search_input.on_value_change(lambda e: refresh_table())
     refresh_table()
+    
+    # Hash kodları listesi
+    ui.separator().classes("my-6")
+    ui.label("🔐 Hash Kodları Listesi").classes("text-h6 m-4 text-center")
+    
+    with ui.card().classes("m-4 bg-blue-1"):
+        ui.label("📋 Tüm üyelerin hash kodları alt alta sıralanmıştır").classes("text-caption text-blue-8 mb-4")
+        
+        for member in list_members():
+            if member["password_hash"]:
+                with ui.card().classes("mb-3 bg-white"):
+                    ui.label(f"👤 {member['name']}").classes("text-subtitle2 font-medium")
+                    ui.label(f"📧 {member['email']}").classes("text-caption text-grey-7")
+                    ui.label(f"📱 {member['phone']}").classes("text-caption text-grey-7")
+                    with ui.row().classes("items-center gap-2"):
+                        ui.label("🔑 Hash:").classes("text-caption font-medium")
+                        ui.code(member["password_hash"]).classes("text-xs bg-grey-2 px-2 py-1 rounded font-mono")
 
 
 @ui.page("/loans")
@@ -912,7 +1154,6 @@ def loans_page() -> None:
                 "İade Al",
                 on_click=lambda r=row: _return_ui(r["id"]),
                 color="primary",
-                size="sm",
                 icon="assignment_return",
             )
 
@@ -952,28 +1193,211 @@ def loans_page() -> None:
 def login_page(request: Request) -> None:
     nav_header()
     next_path = request.query_params.get("next", "/")
-    with ui.card().classes("m-4 w-[420px] max-w-full"):
-        ui.label("Giriş Yap").classes("text-h6")
-        username = ui.input("Kullanıcı adı").classes("w-full")
-        password = ui.input("Şifre").props("type=password").classes("w-full")
+    
+    # Ana giriş kartı
+    with ui.card().classes("m-4 w-[500px] max-w-full mx-auto animate-fade-in"):
+        # Header kısmı
+        with ui.row().classes("items-center justify-center mb-6"):
+            ui.icon("fas fa-shield-alt").classes("text-primary text-h2 mr-3")
+            ui.label("🔐 Admin Giriş Paneli").classes("text-h5 font-bold text-primary")
+        
+        # Güvenlik bilgisi kartı
+        with ui.card().classes("bg-gradient-to-r from-blue-50 to-indigo-50 p-4 mb-6 border-l-4 border-blue-500"):
+            ui.label("🔒 Güvenlik Bilgileri").classes("text-subtitle2 font-bold text-blue-800 mb-2")
+            ui.label("• Şifreler SHA-256 ile hash'lenir").classes("text-caption text-blue-700 mb-1")
+            ui.label("• Salt + şifre kombinasyonu güvenli şekilde saklanır").classes("text-caption text-blue-700 mb-1")
+            ui.label("• Brute force saldırılarına karşı korumalı").classes("text-caption text-blue-700")
+        
+        # Giriş formu
+        with ui.column().classes("gap-4"):
+            username = ui.input("👤 Kullanıcı Adı").props("clearable").classes("w-full").style("font-size: 16px;")
+            password = ui.input("🔑 Şifre").props("type=password clearable").classes("w-full").style("font-size: 16px;")
+            
+            # Şifre gücü göstergesi
+            with ui.row().classes("items-center gap-2"):
+                ui.label("Şifre Gücü:").classes("text-caption text-grey-6")
+                with ui.row().classes("gap-1").props("id=password-strength"):
+                    for i in range(5):
+                        ui.icon("fas fa-circle").classes("text-grey-4 text-xs")
+            
+            def update_password_strength():
+                strength = 0
+                if password.value:
+                    if len(password.value) >= 8:
+                        strength += 1
+                    if any(c.isupper() for c in password.value):
+                        strength += 1
+                    if any(c.islower() for c in password.value):
+                        strength += 1
+                    if any(c.isdigit() for c in password.value):
+                        strength += 1
+                    if any(c in "!@#$%^&*()_+-=[]{}|;:,.<>?" for c in password.value):
+                        strength += 1
+                
+                # Şifre gücü göstergesini güncelle
+                strength_icons = ui.find("password-strength").classes("")
+                if strength >= 4:
+                    strength_icons.classes("text-green-500")
+                elif strength >= 3:
+                    strength_icons.classes("text-yellow-500")
+                elif strength >= 1:
+                    strength_icons.classes("text-orange-500")
+                else:
+                    strength_icons.classes("text-grey-4")
+            
+            password.on_value_change(lambda e: update_password_strength())
 
         def do_login() -> None:
             if not username.value or not password.value:
-                ui.notify("Kullanıcı adı ve şifre zorunludur", type="warning")
+                ui.notify("⚠️ Kullanıcı adı ve şifre zorunludur", type="warning")
                 return
-            user = get_user_by_username(username.value)
-            if not user or not verify_password(password.value, user["salt"], user["password_hash"]):
-                ui.notify("Geçersiz bilgiler", type="negative")
-                return
-            app.storage.user["user"] = {
-                "id": user["id"],
-                "username": user["username"],
-                "is_admin": bool(user["is_admin"]),
-            }
-            ui.notify("Hoş geldiniz", type="positive")
-            ui.navigate.to(next_path)
+            
+            # Loading animasyonu
+            login_btn.loading = True
+            
+            try:
+                user = get_user_by_username(username.value)
+                if not user or not verify_password(password.value, user["salt"], user["password_hash"]):
+                    ui.notify("❌ Geçersiz kullanıcı adı veya şifre", type="negative")
+                    return
+                
+                app.storage.user["user"] = {
+                    "id": user["id"],
+                    "username": user["username"],
+                    "is_admin": bool(user["is_admin"]),
+                }
+                
+                ui.notify(f"🎉 Hoş geldiniz, {user['username']}!", type="positive")
+                ui.navigate.to(next_path)
+                
+            except Exception as e:
+                ui.notify(f"❌ Giriş hatası: {str(e)}", type="negative")
+            finally:
+                login_btn.loading = False
 
-        ui.button("Giriş", on_click=do_login, color="primary", icon="login").classes("mt-2")
+        # Giriş butonu
+        login_btn = ui.button(
+            "🚪 Giriş Yap", 
+            on_click=do_login, 
+            color="primary", 
+            icon="fas fa-sign-in-alt"
+        ).classes("w-full font-medium text-lg py-3 animate-pulse")
+        
+        # Kayıt ol / Giriş yap seçimi
+        ui.separator().classes("my-4")
+        with ui.row().classes("justify-center gap-4"):
+            ui.label("Hesabınız yok mu?").classes("text-caption text-grey-6")
+            ui.button(
+                "📝 Kayıt Ol", 
+                on_click=lambda: show_register_form(), 
+                color="secondary", 
+                icon="fas fa-user-plus"
+            ).props("flat").classes("font-medium")
+        
+        # Kayıt formu (başlangıçta gizli)
+        register_form = ui.card().classes("mt-4 bg-gradient-to-r from-purple-50 to-pink-50 p-4 border-l-4 border-purple-500 hidden")
+        
+        with register_form:
+            ui.label("📝 Yeni Hesap Oluştur").classes("text-subtitle2 font-bold text-purple-800 mb-3")
+            
+            # Kayıt formu alanları
+            with ui.column().classes("gap-3"):
+                new_username = ui.input("👤 Yeni Kullanıcı Adı").props("clearable").classes("w-full")
+                new_email = ui.input("📧 E-posta (opsiyonel)").props("clearable type=email").classes("w-full")
+                new_password = ui.input("🔑 Yeni Şifre").props("type=password clearable").classes("w-full")
+                confirm_password = ui.input("🔒 Şifre Tekrar").props("type=password clearable").classes("w-full")
+                
+                # Admin checkbox
+                admin_checkbox = ui.checkbox("👑 Admin Yetkisi").classes("mt-2")
+                
+                # Kayıt butonu
+                register_btn = ui.button(
+                    "📝 Hesap Oluştur", 
+                    on_click=lambda: do_register(), 
+                    color="purple", 
+                    icon="fas fa-user-plus"
+                ).classes("w-full font-medium")
+                
+                # Giriş formuna dön butonu
+                ui.button(
+                    "← Giriş Formuna Dön", 
+                    on_click=lambda: hide_register_form(), 
+                    color="grey", 
+                    icon="fas fa-arrow-left"
+                ).props("flat").classes("w-full mt-2")
+        
+        def show_register_form():
+            register_form.classes("block")
+            register_form.classes("animate-fade-in")
+        
+        def hide_register_form():
+            register_form.classes("hidden")
+        
+        def do_register():
+            if not new_username.value or not new_password.value:
+                ui.notify("⚠️ Kullanıcı adı ve şifre zorunludur", type="warning")
+                return
+            
+            if new_password.value != confirm_password.value:
+                ui.notify("❌ Şifreler eşleşmiyor", type="negative")
+                return
+            
+            if len(new_password.value) < 8:
+                ui.notify("⚠️ Şifre en az 8 karakter olmalıdır", type="warning")
+                return
+            
+            # Loading animasyonu
+            register_btn.loading = True
+            
+            try:
+                # Kullanıcı adı kontrolü
+                existing_user = get_user_by_username(new_username.value)
+                if existing_user:
+                    ui.notify("❌ Bu kullanıcı adı zaten kullanılıyor", type="negative")
+                    return
+                
+                # Yeni kullanıcı oluştur
+                salt = generate_salt()
+                password_hash = hash_password(new_password.value, salt)
+                
+                with closing(get_connection()) as connection, closing(connection.cursor()) as cursor:
+                    cursor.execute(
+                        "INSERT INTO users (username, password_hash, salt, is_admin) VALUES (?, ?, ?, ?);",
+                        (new_username.value, password_hash, salt, admin_checkbox.value),
+                    )
+                    connection.commit()
+                
+                ui.notify(f"🎉 {new_username.value} hesabı başarıyla oluşturuldu!", type="positive")
+                
+                # Formu temizle ve gizle
+                new_username.value = ""
+                new_email.value = ""
+                new_password.value = ""
+                confirm_password.value = ""
+                admin_checkbox.value = False
+                hide_register_form()
+                
+            except Exception as e:
+                ui.notify(f"❌ Kayıt hatası: {str(e)}", type="negative")
+            finally:
+                register_btn.loading = False
+        
+        # Test hesabı bilgileri
+        with ui.expansion("🧪 Test Hesabı Bilgileri", icon="fas fa-info-circle").classes("mt-6"):
+            with ui.card().classes("bg-gradient-to-r from-green-50 to-emerald-50 p-4 border-l-4 border-green-500"):
+                ui.label("👑 Admin Hesabı").classes("text-subtitle2 font-bold text-green-800 mb-3")
+                with ui.row().classes("items-center gap-3 mb-2"):
+                    ui.icon("fas fa-user").classes("text-green-600")
+                    ui.label("Kullanıcı adı: admin").classes("text-caption font-medium text-green-700")
+                with ui.row().classes("items-center gap-3 mb-2"):
+                    ui.icon("fas fa-key").classes("text-green-600")
+                    ui.label("Şifre: Admin123!").classes("text-caption font-medium text-green-700")
+                ui.label("(Şifre güvenli şekilde hash'lenmiş olarak saklanır)").classes("text-caption text-green-600 italic")
+        
+        # Alt bilgi
+        with ui.row().classes("justify-center mt-6"):
+            ui.label("🔐 Güvenli kütüphane yönetimi için tasarlandı").classes("text-caption text-grey-6")
+    
     app_footer()
 
 
@@ -999,7 +1423,7 @@ def _confirm_delete(message: str, on_yes: Any) -> None:
 
 if __name__ == "__main__":
     init_db()
-    ui.run(title="Kütüphane", reload=False, show=False, port=8095, host="0.0.0.0", storage_secret=os.getenv("STORAGE_SECRET", "dev-secret")
+    ui.run(title="YB Library Management System", reload=False, show=False, port=8096, host="0.0.0.0", storage_secret=os.getenv("STORAGE_SECRET", "dev-secret")
     )
 
 
