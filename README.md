@@ -1,176 +1,168 @@
-# 📚 Kütüphane Yönetim Sistemi
+# 🏛️ YB Kütüphane Sistemi
 
-Modern ve kullanıcı dostu kütüphane yönetim platformu. NiceGUI ve SQLite kullanılarak geliştirilmiştir.
+Modern web tabanlı kütüphane yönetim sistemi. PostgreSQL veritabanı ve NiceGUI ile geliştirilmiştir.
 
-## ✨ Özellikler
+## 🚀 Docker ile Hızlı Başlangıç
 
-- 🎨 **Modern UI**: Glassmorphism tasarım ve gradient arka planlar
-- 📖 **Kitap Yönetimi**: Kitap ekleme, düzenleme, silme ve arama
-- 👥 **Üye Yönetimi**: Üye kayıtları ve bilgi takibi
-- 🔄 **Ödünç İşlemleri**: Kitap ödünç alma ve iade takibi
-- 🔐 **Güvenli Giriş**: Şifreli kullanıcı yönetimi
-- 📱 **Responsive**: Mobil ve masaüstü uyumlu tasarım
-- 🌙 **Dark Mode**: Karanlık tema desteği
+### Docker Desktop'ta Çalıştırma
 
-## 🚀 Kurulum
-
-### Gereksinimler
-- Python 3.8+
-- pip
-
-### Adımlar
-1. Repository'yi klonlayın:
+#### Yöntem 1: Docker Hub'dan Çekme (Önerilen)
 ```bash
-git clone https://github.com/KULLANICI_ADIN/nicegui-library-system.git
-cd nicegui-library-system
+# 1. Docker Desktop'ı açın
+# 2. Terminal'de şu komutları çalıştırın:
+
+# Uygulamayı çek
+docker pull yusufgbt/yb-library:latest
+
+# PostgreSQL'i çek
+docker pull postgres:15
+
+# 3. docker-compose.yml dosyasını kullanarak çalıştır
+docker-compose up -d
 ```
 
-2. Virtual environment oluşturun:
+#### Yöntem 2: Manuel Container Oluşturma
 ```bash
-python -m venv .venv
-source .venv/bin/activate  # Linux/Mac
-# veya
-.venv\Scripts\activate  # Windows
+# 1. PostgreSQL container'ı oluştur
+docker run -d \
+  --name yb_library_db \
+  -e POSTGRES_DB=library \
+  -e POSTGRES_USER=library_user \
+  -e POSTGRES_PASSWORD=library123 \
+  -p 5432:5432 \
+  postgres:15
+
+# 2. Uygulama container'ı oluştur
+docker run -d \
+  --name yb_library_app \
+  -e DB_HOST=host.docker.internal \
+  -e DB_PORT=5432 \
+  -e DB_NAME=library \
+  -e DB_USER=library_user \
+  -e DB_PASSWORD=library123 \
+  -e ADMIN_USERNAME=yusufgbt \
+  -e ADMIN_PASSWORD=yusuf1234 \
+  -p 8082:8082 \
+  yusufgbt/yb-library:latest
 ```
 
-3. Bağımlılıkları yükleyin:
+## 🌐 Erişim Bilgileri
+
+- **Uygulama**: http://localhost:8082
+- **PostgreSQL**: localhost:5432
+- **Admin Giriş**: 
+  - Kullanıcı: `yusufgbt`
+  - Şifre: `yusuf1234`
+
+## 📋 Özellikler
+
+- 📚 **Kitap Yönetimi**: Ekleme, silme, listeleme
+- 👥 **Üye Yönetimi**: Üye ekleme, silme, listeleme
+- 📖 **Ödünç Verme**: Kitap ödünç verme ve iade işlemleri
+- 🔐 **Güvenli Giriş**: Admin paneli
+- 🎨 **Modern UI**: NiceGUI ile responsive tasarım
+
+## 🛠️ Geliştirme
+
+### Yerel Geliştirme
 ```bash
+# Bağımlılıkları yükle
 pip install -r requirements.txt
-```
 
-4. Uygulamayı başlatın:
-```bash
+# PostgreSQL'i başlat
+docker run -d --name postgres_dev -e POSTGRES_DB=library -e POSTGRES_USER=library_user -e POSTGRES_PASSWORD=library123 -p 5432:5432 postgres:15
+
+# Uygulamayı çalıştır
 python main.py
 ```
 
-5. Tarayıcıda açın: `http://localhost:8095`
+### Docker Build
+```bash
+# İmaj oluştur
+docker build -t yb-library .
 
-## 🔑 Giriş Bilgileri
-
-- **Kullanıcı adı:** `admin`
-- **Şifre:** `admin123`
-
-## 🛠️ Teknolojiler
-
-- **Frontend**: NiceGUI (Python web framework)
-- **Backend**: Python + SQLite
-- **Database**: SQLite3
-- **UI Components**: Quasar Design System
-- **Authentication**: SHA256 + Salt
+# Çalıştır
+docker run -p 8082:8082 yb-library
+```
 
 ## 📁 Proje Yapısı
 
 ```
-nicegui_sqlite/
-├── main.py              # Ana uygulama dosyası
+yb-library-postgresql/
+├── main.py              # Ana uygulama
+├── Dockerfile           # Docker imaj tanımı
+├── docker-compose.yml   # Container orchestration
 ├── requirements.txt     # Python bağımlılıkları
-├── README.md           # Bu dosya
-├── GITHUB_SETUP.md     # GitHub entegrasyon rehberi
-└── database.db         # SQLite veritabanı (otomatik oluşur)
+├── .dockerignore        # Docker build optimizasyonu
+└── README.md           # Bu dosya
 ```
 
-## 🎯 Kullanım
+## 🔧 Docker Compose Komutları
 
-### Ana Sayfa
-- Sistem genel bakışı
-- Hızlı erişim butonları
-- İstatistik kartları
+```bash
+# Tüm servisleri başlat
+docker-compose up -d
 
-### Kitaplar
-- Kitap ekleme/düzenleme/silme
-- Başlık, yazar, ISBN arama
-- Dünya klasiklerini toplu ekleme
+# Servisleri durdur
+docker-compose down
 
-### Üyeler
-- Üye kayıt işlemleri
-- İletişim bilgileri yönetimi
-- Üye arama
+# Log'ları görüntüle
+docker-compose logs app
+docker-compose logs postgres
 
-### Ödünç İşlemleri
-- Kitap ödünç alma
-- İade takibi
-- Aktif ödünç listesi
+# Servisleri yeniden başlat
+docker-compose restart
 
-## 🔧 Geliştirme
-
-### Yeni Özellik Ekleme
-1. Feature branch oluşturun: `git checkout -b feature/yeni-ozellik`
-2. Kodunuzu yazın ve test edin
-3. Commit yapın: `git commit -m "✨ Yeni özellik eklendi"`
-4. Push edin: `git push origin feature/yeni-ozellik`
-5. Pull Request oluşturun
-
-### Veritabanı Şeması
-```sql
--- Kitaplar tablosu
-CREATE TABLE books (
-    id INTEGER PRIMARY KEY,
-    title TEXT NOT NULL,
-    author TEXT NOT NULL,
-    isbn TEXT UNIQUE,
-    year INTEGER,
-    status TEXT DEFAULT 'Müsait'
-);
-
--- Üyeler tablosu
-CREATE TABLE members (
-    id INTEGER PRIMARY KEY,
-    name TEXT NOT NULL,
-    email TEXT,
-    phone TEXT
-);
-
--- Ödünç tablosu
-CREATE TABLE loans (
-    id INTEGER PRIMARY KEY,
-    book_id INTEGER,
-    member_id INTEGER,
-    loan_date TEXT,
-    due_date TEXT,
-    return_date TEXT,
-    FOREIGN KEY (book_id) REFERENCES books (id),
-    FOREIGN KEY (member_id) REFERENCES members (id)
-);
-
--- Kullanıcılar tablosu
-CREATE TABLE users (
-    id INTEGER PRIMARY KEY,
-    username TEXT UNIQUE NOT NULL,
-    password_hash TEXT NOT NULL,
-    salt TEXT NOT NULL
-);
+# Tüm verileri sil (dikkatli kullanın!)
+docker-compose down -v
 ```
 
-## 📊 Ekran Görüntüleri
+## 🐛 Sorun Giderme
 
-![Ana Sayfa](screenshots/main-page.png)
-![Kitaplar](screenshots/books.png)
-![Üyeler](screenshots/members.png)
-![Ödünç](screenshots/loans.png)
+### Port Çakışması
+```bash
+# Port 8082 kullanımda mı kontrol et
+netstat -tlnp | grep 8082
+# veya
+ss -tlnp | grep 8082
+
+# Eğer kullanımdaysa, docker-compose.yml'da port değiştir
+```
+
+### Veritabanı Bağlantı Hatası
+```bash
+# PostgreSQL container'ının çalıştığını kontrol et
+docker ps | grep postgres
+
+# Log'ları kontrol et
+docker-compose logs postgres
+```
+
+## 📊 Sistem Gereksinimleri
+
+- **Docker**: 20.10+
+- **Docker Compose**: 2.0+
+- **RAM**: Minimum 2GB
+- **Disk**: Minimum 1GB boş alan
 
 ## 🤝 Katkıda Bulunma
 
 1. Fork yapın
 2. Feature branch oluşturun (`git checkout -b feature/AmazingFeature`)
-3. Değişikliklerinizi commit edin (`git commit -m 'Add some AmazingFeature'`)
-4. Branch'inizi push edin (`git push origin feature/AmazingFeature`)
-5. Pull Request oluşturun
+3. Commit yapın (`git commit -m 'Add some AmazingFeature'`)
+4. Push yapın (`git push origin feature/AmazingFeature`)
+5. Pull Request açın
 
-## 📝 Lisans
+## 📄 Lisans
 
-Bu proje MIT lisansı altında lisanslanmıştır. Detaylar için `LICENSE` dosyasına bakın.
-
-## 🙏 Teşekkürler
-
-- [NiceGUI](https://nicegui.io/) - Modern Python web framework
-- [Quasar](https://quasar.dev/) - Vue.js UI framework
-- [SQLite](https://www.sqlite.org/) - Hafif veritabanı
+Bu proje MIT lisansı altında lisanslanmıştır.
 
 ## 📞 İletişim
 
-- **Proje Linki**: [https://github.com/KULLANICI_ADIN/nicegui-library-system](https://github.com/KULLANICI_ADIN/nicegui-library-system)
-- **Issues**: [GitHub Issues](https://github.com/KULLANICI_ADIN/nicegui-library-system/issues)
+- **Geliştirici**: Yusuf GBT
+- **GitHub**: [@yusufgbt](https://github.com/yusufgbt)
+- **Docker Hub**: [yusufgbt/yb-library](https://hub.docker.com/r/yusufgbt/yb-library)
 
 ---
 
-⭐ Bu projeyi beğendiyseniz yıldız vermeyi unutmayın!
+**⭐ Bu projeyi beğendiyseniz yıldız vermeyi unutmayın!**

@@ -1,10 +1,17 @@
 # Veritabanı Yönetici Sınıfı
-# SQLite desteği
+# PostgreSQL ve SQLite desteği
 import os
 import sqlite3
 from contextlib import closing
 from typing import Any, Dict, List, Optional, Union
 from abc import ABC, abstractmethod
+
+try:
+    import psycopg2
+    from psycopg2.extras import RealDictCursor
+    POSTGRES_AVAILABLE = True
+except ImportError:
+    POSTGRES_AVAILABLE = False
 
 class DatabaseManager(ABC):
     """Soyut veritabanı yönetici sınıfı"""
@@ -138,20 +145,75 @@ class SQLiteManager(DatabaseManager):
         except Exception as e:
             print(f"⚠️ Admin kullanıcısı oluşturulamadı: {e}")
 
-
+class PostgreSQLManager(DatabaseManager):
+    """PostgreSQL veritabanı yöneticisi"""
+    
+    def __init__(self, config: Dict[str, Any]):
+        self.config = config
+        if not POSTGRES_AVAILABLE:
+            raise ImportError("psycopg2 paketi kurulu değil!")
+    
+    def get_connection(self):
+        """PostgreSQL bağlantısı oluşturur"""
+        connection = psycopg2.connect(**self.config)
+        connection.autocommit = False
+        return connection
+    
+    def execute_query(self, query: str, params: tuple = None) -> List[Dict[str, Any]]:
+        """SQL sorgusu çalıştırır"""
+        with closing(self.get_connection()) as connection, closing(connection.cursor(cursor_factory=RealDictCursor)) as cursor:
+            if params:
+                cursor.execute(query, params)
+            else:
+                cursor.execute(query)
+            rows = cursor.fetchall()
+            return [dict(row) for row in rows]
+    
+    def execute_update(self, query: str, params: tuple = None) -> int:
+        """UPDATE/INSERT/DELETE sorgusu çalıştırır"""
+        with closing(self.get_connection()) as connection, closing(connection.cursor()) as cursor:
+            try:
+                if params:
+                    cursor.execute(query, params)
+                else:
+                    cursor.execute(query)
+                connection.commit()
+                return cursor.rowcount
+            except Exception:
+                connection.rollback()
+                raise
 
 class DatabaseFactory:
     """Veritabanı yönetici fabrikası"""
     
     @staticmethod
-    def create_manager(db_type: str = "sqlite", **kwargs) -> DatabaseManager:
+    def create_manager(db_type: str = "postgresql", **kwargs) -> DatabaseManager:
         """Veritabanı yöneticisi oluşturur"""
-        return SQLiteManager(kwargs.get('db_path', 'database.db'))
+        if db_type.lower() == "postgresql":
+            if not POSTGRES_AVAILABLE:
+                print("⚠️ PostgreSQL paketi kurulu değil, SQLite kullanılıyor")
+                return SQLiteManager(kwargs.get('db_path', 'database.db'))
+            return PostgreSQLManager(kwargs)
+        else:
+            return SQLiteManager(kwargs.get('db_path', 'database.db'))
 
 # Varsayılan veritabanı yöneticisi
 def get_database_manager() -> DatabaseManager:
     """Varsayılan veritabanı yöneticisini döndürür"""
-    return SQLiteManager()
+    # Çevre değişkenlerinden veritabanı tipini al
+    db_type = os.getenv('DB_TYPE', 'postgresql')
+    
+    if db_type.lower() == 'postgresql':
+        config = {
+            'host': os.getenv('DB_HOST', 'localhost'),
+            'port': os.getenv('DB_PORT', '5432'),
+            'database': os.getenv('DB_NAME', 'yb_library'),
+            'user': os.getenv('DB_USER', 'postgres'),
+            'password': os.getenv('DB_PASSWORD', 'postgres'),
+        }
+        return DatabaseFactory.create_manager('postgresql', **config)
+    else:
+        return SQLiteManager('./database.db')
 
 # Test fonksiyonu
 def test_database():

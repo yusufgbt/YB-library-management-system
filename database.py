@@ -1,33 +1,31 @@
-# SQLite Veritabanı İşlemleri
-import sqlite3
+# PostgreSQL Veritabanı İşlemleri
+import psycopg2
+from psycopg2.extras import RealDictCursor
 from contextlib import closing
 from typing import List, Dict, Any, Optional
-import os
+from config import get_connection_params
 
 def get_connection():
-    """SQLite veritabanı bağlantısı oluşturur"""
+    """PostgreSQL veritabanı bağlantısı oluşturur"""
     try:
-        from config import get_db_path
-        connection = sqlite3.connect(get_db_path())
-        connection.row_factory = sqlite3.Row
+        connection = psycopg2.connect(**get_connection_params())
+        connection.autocommit = False
         return connection
-    except sqlite3.Error as e:
+    except psycopg2.Error as e:
         print(f"Veritabanı bağlantı hatası: {e}")
         raise
 
 def init_database():
-    """SQLite veritabanını başlatır ve tabloları oluşturur"""
-    with closing(get_connection()) as connection:
+    """PostgreSQL veritabanını başlatır ve tabloları oluşturur"""
+    with closing(get_connection()) as connection, closing(connection.cursor()) as cursor:
         try:
-            cursor = connection.cursor()
-            
             # Books tablosu
             cursor.execute("""
                 CREATE TABLE IF NOT EXISTS books (
-                    id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    title TEXT NOT NULL,
-                    author TEXT NOT NULL,
-                    isbn TEXT UNIQUE,
+                    id SERIAL PRIMARY KEY,
+                    title VARCHAR(255) NOT NULL,
+                    author VARCHAR(255) NOT NULL,
+                    isbn VARCHAR(20) UNIQUE,
                     year INTEGER
                 );
             """)
@@ -35,23 +33,23 @@ def init_database():
             # Members tablosu
             cursor.execute("""
                 CREATE TABLE IF NOT EXISTS members (
-                    id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    name TEXT NOT NULL,
-                    email TEXT UNIQUE,
-                    phone TEXT,
-                    password_hash TEXT
+                    id SERIAL PRIMARY KEY,
+                    name VARCHAR(255) NOT NULL,
+                    email VARCHAR(255) UNIQUE,
+                    phone VARCHAR(20),
+                    password_hash VARCHAR(255)
                 );
             """)
             
             # Loans tablosu
             cursor.execute("""
                 CREATE TABLE IF NOT EXISTS loans (
-                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    id SERIAL PRIMARY KEY,
                     book_id INTEGER NOT NULL,
                     member_id INTEGER NOT NULL,
-                    loan_date TEXT NOT NULL,
-                    due_date TEXT NOT NULL,
-                    return_date TEXT,
+                    loan_date DATE NOT NULL,
+                    due_date DATE NOT NULL,
+                    return_date DATE,
                     FOREIGN KEY(book_id) REFERENCES books(id) ON DELETE CASCADE,
                     FOREIGN KEY(member_id) REFERENCES members(id) ON DELETE CASCADE
                 );
@@ -60,59 +58,68 @@ def init_database():
             # Users tablosu
             cursor.execute("""
                 CREATE TABLE IF NOT EXISTS users (
-                    id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    username TEXT NOT NULL UNIQUE,
-                    password_hash TEXT NOT NULL,
-                    salt TEXT NOT NULL,
-                    is_admin BOOLEAN NOT NULL DEFAULT 0
+                    id SERIAL PRIMARY KEY,
+                    username VARCHAR(100) NOT NULL UNIQUE,
+                    password_hash VARCHAR(255) NOT NULL,
+                    salt VARCHAR(255) NOT NULL,
+                    is_admin BOOLEAN NOT NULL DEFAULT FALSE
                 );
             """)
             
             connection.commit()
-            print("✅ SQLite veritabanı başarıyla başlatıldı!")
+            print("✅ PostgreSQL veritabanı başarıyla başlatıldı!")
             
-        except sqlite3.Error as e:
+        except psycopg2.Error as e:
+            connection.rollback()
             print(f"❌ Veritabanı başlatma hatası: {e}")
             raise
 
 def create_database():
-    """SQLite veritabanı dosyasını oluşturur (eğer yoksa)"""
-    from config import get_db_path
-    db_path = get_db_path()
+    """PostgreSQL veritabanını oluşturur (eğer yoksa)"""
+    # Önce postgres veritabanına bağlan
+    params = get_connection_params()
+    db_name = params.pop('database')
     
     try:
-        # Veritabanı dosyası yoksa oluştur
-        if not os.path.exists(db_path):
-            with closing(get_connection()) as connection:
-                connection.close()
-            print(f"✅ '{db_path}' veritabanı dosyası oluşturuldu!")
+        connection = psycopg2.connect(**params)
+        connection.autocommit = True
+        cursor = connection.cursor()
+        
+        # Veritabanı var mı kontrol et
+        cursor.execute("SELECT 1 FROM pg_database WHERE datname = %s;", (db_name,))
+        if not cursor.fetchone():
+            cursor.execute(f"CREATE DATABASE {db_name};")
+            print(f"✅ '{db_name}' veritabanı oluşturuldu!")
         else:
-            print(f"ℹ️ '{db_path}' veritabanı dosyası zaten mevcut!")
+            print(f"ℹ️ '{db_name}' veritabanı zaten mevcut!")
             
-    except sqlite3.Error as e:
+        cursor.close()
+        connection.close()
+        
+    except psycopg2.Error as e:
         print(f"❌ Veritabanı oluşturma hatası: {e}")
         raise
 
 def test_connection():
-    """SQLite bağlantısını test eder"""
+    """PostgreSQL bağlantısını test eder"""
     try:
         with closing(get_connection()) as connection:
-            cursor = connection.cursor()
-            cursor.execute("SELECT sqlite_version();")
-            version = cursor.fetchone()
-            print(f"✅ SQLite bağlantısı başarılı!")
-            print(f"📊 Veritabanı versiyonu: {version[0]}")
-            return True
+            with closing(connection.cursor()) as cursor:
+                cursor.execute("SELECT version();")
+                version = cursor.fetchone()
+                print(f"✅ PostgreSQL bağlantısı başarılı!")
+                print(f"📊 Veritabanı versiyonu: {version[0]}")
+                return True
     except Exception as e:
-        print(f"❌ SQLite bağlantı hatası: {e}")
+        print(f"❌ PostgreSQL bağlantı hatası: {e}")
         return False
 
 if __name__ == "__main__":
-    print("🚀 SQLite veritabanı kurulumu başlatılıyor...")
+    print("🚀 PostgreSQL veritabanı kurulumu başlatılıyor...")
     try:
         create_database()
         init_database()
         test_connection()
-        print("🎉 SQLite kurulumu tamamlandı!")
+        print("🎉 PostgreSQL kurulumu tamamlandı!")
     except Exception as e:
         print(f"💥 Kurulum hatası: {e}")
