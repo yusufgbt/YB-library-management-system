@@ -1,6 +1,6 @@
 # 🏛️ YB Kütüphane Sistemi
 
-Modern web tabanlı kütüphane yönetim sistemi. PostgreSQL veritabanı ve NiceGUI ile geliştirilmiştir.
+Modern web tabanlı kütüphane yönetim sistemi. PostgreSQL veritabanı, NiceGUI ve pgAdmin ile geliştirilmiştir.
 
 ## 🚀 Docker ile Hızlı Başlangıç
 
@@ -17,6 +17,9 @@ docker pull yusufgbt/yb-library:latest
 # PostgreSQL'i çek
 docker pull postgres:15
 
+# pgAdmin'i çek
+docker pull dpage/pgadmin4:latest
+
 # 3. docker-compose.yml dosyasını kullanarak çalıştır
 docker-compose up -d
 ```
@@ -32,7 +35,15 @@ docker run -d \
   -p 5432:5432 \
   postgres:15
 
-# 2. Uygulama container'ı oluştur
+# 2. pgAdmin container'ı oluştur
+docker run -d \
+  --name yb_library_pgadmin \
+  -e PGADMIN_DEFAULT_EMAIL=admin@yblibrary.com \
+  -e PGADMIN_DEFAULT_PASSWORD=admin123 \
+  -p 5050:80 \
+  dpage/pgadmin4:latest
+
+# 3. Uygulama container'ı oluştur
 docker run -d \
   --name yb_library_app \
   -e DB_HOST=host.docker.internal \
@@ -48,11 +59,15 @@ docker run -d \
 
 ## 🌐 Erişim Bilgileri
 
-- **Uygulama**: http://localhost:8082
+- **Kütüphane Uygulaması**: http://localhost:8082
+- **pgAdmin (Veritabanı Yönetimi)**: http://localhost:5050
 - **PostgreSQL**: localhost:5432
-- **Admin Giriş**: 
+- **Admin Giriş (Kütüphane)**: 
   - Kullanıcı: `yusufgbt`
   - Şifre: `yusuf1234`
+- **pgAdmin Giriş**: 
+  - Email: `admin@yblibrary.com`
+  - Şifre: `admin123`
 
 ## 📋 Özellikler
 
@@ -61,6 +76,32 @@ docker run -d \
 - 📖 **Ödünç Verme**: Kitap ödünç verme ve iade işlemleri
 - 🔐 **Güvenli Giriş**: Admin paneli
 - 🎨 **Modern UI**: NiceGUI ile responsive tasarım
+- 🗄️ **Veritabanı Yönetimi**: pgAdmin ile PostgreSQL yönetimi
+
+## 🗄️ pgAdmin Kullanımı
+
+### pgAdmin'e Giriş
+1. Tarayıcıda http://localhost:5050 adresini açın
+2. Giriş bilgileri:
+   - **Email**: `admin@yblibrary.com`
+   - **Şifre**: `admin123`
+
+### Veritabanı Bağlantısı
+1. **Add New Server** butonuna tıklayın
+2. **General** sekmesinde:
+   - **Name**: `YB Library DB` (istediğiniz isim)
+3. **Connection** sekmesinde:
+   - **Host**: `yb_library_db` (Docker Compose ile) veya `host.docker.internal` (manuel)
+   - **Port**: `5432`
+   - **Database**: `library`
+   - **Username**: `library_user`
+   - **Password**: `library123`
+4. **Save** butonuna tıklayın
+
+### Veritabanı İşlemleri
+- **Tabloları görüntüleme**: Schemas → public → Tables
+- **Veri ekleme/düzenleme**: Tabloya sağ tık → View/Edit Data
+- **SQL sorguları**: Tools → Query Tool
 
 ## 🛠️ Geliştirme
 
@@ -91,7 +132,7 @@ docker run -p 8082:8082 yb-library
 yb-library-postgresql/
 ├── main.py              # Ana uygulama
 ├── Dockerfile           # Docker imaj tanımı
-├── docker-compose.yml   # Container orchestration
+├── docker-compose.yml   # Container orchestration (PostgreSQL + pgAdmin + App)
 ├── requirements.txt     # Python bağımlılıkları
 ├── .dockerignore        # Docker build optimizasyonu
 └── README.md           # Bu dosya
@@ -100,7 +141,7 @@ yb-library-postgresql/
 ## 🔧 Docker Compose Komutları
 
 ```bash
-# Tüm servisleri başlat
+# Tüm servisleri başlat (PostgreSQL + pgAdmin + App)
 docker-compose up -d
 
 # Servisleri durdur
@@ -109,6 +150,7 @@ docker-compose down
 # Log'ları görüntüle
 docker-compose logs app
 docker-compose logs postgres
+docker-compose logs pgadmin
 
 # Servisleri yeniden başlat
 docker-compose restart
@@ -136,6 +178,15 @@ docker ps | grep postgres
 
 # Log'ları kontrol et
 docker-compose logs postgres
+```
+
+### pgAdmin Bağlantı Hatası
+```bash
+# pgAdmin container'ının çalıştığını kontrol et
+docker ps | grep pgadmin
+
+# Log'ları kontrol et
+docker-compose logs pgadmin
 ```
 
 ## 📊 Sistem Gereksinimleri
