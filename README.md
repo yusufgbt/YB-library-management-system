@@ -210,7 +210,8 @@ Bu proje MIT lisansı altında lisanslanmıştır.
 
 ## 📞 İletişim
 
-- **Geliştirici**: Yusuf GBT
+- **Geliştirici**: Yusuf Bakar
+- **Email**: yusufgs2727@gmail.com
 - **GitHub**: [@yusufgbt](https://github.com/yusufgbt)
 - **Docker Hub**: [yusufgbt/yb-library](https://hub.docker.com/r/yusufgbt/yb-library)
 
