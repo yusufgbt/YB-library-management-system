@@ -42,6 +42,8 @@ class Member(Base):
     name = Column(String, nullable=False)
     email = Column(String, nullable=True)
     phone = Column(String, nullable=True)
+    age = Column(Integer, nullable=True)  # Yeni yaş kolonu
+    member_category = Column(String(50), nullable=True)  # Yeni kategori kolonu
     password_hash = Column(String, nullable=False)
     salt = Column(String, nullable=False)
     
@@ -127,7 +129,7 @@ async def add_csp_header(request: Request, call_next):
     response.headers["Content-Security-Policy"] = csp
     return response
 
-def create_member(name: str, email: str = None, phone: str = None) -> int:
+def create_member(name: str, email: str = None, phone: str = None, age: int = None, category: str = None) -> int:
     password = name + "123"  # Basit şifre
     salt = secrets.token_hex(16)
     password_hash = hashlib.sha256((password + salt).encode()).hexdigest()
@@ -138,6 +140,8 @@ def create_member(name: str, email: str = None, phone: str = None) -> int:
             name=name,
             email=email,
             phone=phone,
+            age=age,
+            member_category=category,
             password_hash=password_hash,
             salt=salt
         )
@@ -158,6 +162,8 @@ def get_members() -> List[Dict[str, Any]]:
                 "name": member.name,
                 "email": member.email,
                 "phone": member.phone,
+                "age": member.age,
+                "member_category": member.member_category,
                 "password_hash": member.password_hash,
                 "salt": member.salt
             }
@@ -578,9 +584,13 @@ def members_page() -> None:
                             with ui.column().classes("flex-1"):
                                 ui.label(member["name"]).classes("text-h6 font-bold")
                                 if member["email"]:
-                                    ui.label(f"E-posta: {member['email']}").classes("text-caption")
+                                    ui.label(f"📧 E-posta: {member['email']}").classes("text-caption")
                                 if member["phone"]:
-                                    ui.label(f"Telefon: {member['phone']}").classes("text-caption")
+                                    ui.label(f"📞 Telefon: {member['phone']}").classes("text-caption")
+                                if member["age"]:
+                                    ui.label(f"🎂 Yaş: {member['age']}").classes("text-caption text-blue-600")
+                                if member["member_category"]:
+                                    ui.label(f"🏷️ Kategori: {member['member_category']}").classes("text-caption text-purple-600")
                                 ui.label(f"🔑 Şifre: {get_member_password(member['id'])}").classes("text-caption text-green-600")
                                 ui.label(f"🔐 Hash: {member['password_hash'][:20]}...").classes("text-caption text-gray-500")
                             
@@ -614,7 +624,7 @@ def loans_page() -> None:
                 with ui.column().classes("flex-1"):
                     ui.label("📖 Kitap").classes("text-caption mb-1")
                     book_select = ui.select(
-                        options=[(book["id"], f"{book['title']} - {book['author']}") for book in get_available_books()],
+                        [(book["id"], f"{book['title']} - {book['author']}") for book in get_available_books()],
                         label="Kitap Seçin"
                     ).classes("w-full")
                 
@@ -622,7 +632,7 @@ def loans_page() -> None:
                 with ui.column().classes("flex-1"):
                     ui.label("👤 Üye").classes("text-caption mb-1")
                     member_select = ui.select(
-                        options=[(member["id"], member["name"]) for member in get_members()],
+                        [(member["id"], member["name"]) for member in get_members()],
                         label="Üye Seçin"
                     ).classes("w-full")
             
@@ -734,6 +744,12 @@ def create_member_dialog(on_saved: Optional[Any] = None) -> None:
         name_input = ui.input("Ad Soyad").classes("w-full")
         email_input = ui.input("E-posta (opsiyonel)").classes("w-full")
         phone_input = ui.input("Telefon (opsiyonel)").classes("w-full")
+        age_input = ui.input("Yaş (opsiyonel)").classes("w-full")
+        category_input = ui.select(
+            ["Öğrenci", "Öğretmen", "Araştırmacı", "Genel", "VIP"],
+            value="Genel",
+            label="Üye Kategorisi"
+        ).classes("w-full")
 
         with ui.row().classes("justify-end w-full gap-2"):
             ui.button("İptal", on_click=dialog.close)
@@ -743,7 +759,23 @@ def create_member_dialog(on_saved: Optional[Any] = None) -> None:
                     if not name_input.value:
                         ui.notify("Ad Soyad zorunludur", type="warning")
                         return
-                    create_member(name_input.value, email_input.value or None, phone_input.value or None)
+                    
+                    # Yaş değerini integer'a çevir
+                    age = None
+                    if age_input.value and age_input.value.strip():
+                        try:
+                            age = int(age_input.value)
+                        except ValueError:
+                            ui.notify("Yaş sayısal olmalıdır", type="warning")
+                            return
+                    
+                    create_member(
+                        name_input.value, 
+                        email_input.value or None, 
+                        phone_input.value or None,
+                        age,
+                        category_input.value
+                    )
                     ui.notify("Üye eklendi", type="positive")
                     dialog.close()
                     if on_saved:
