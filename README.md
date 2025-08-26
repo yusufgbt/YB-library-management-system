@@ -103,6 +103,69 @@ docker run -d \
 - **Veri ekleme/düzenleme**: Tabloya sağ tık → View/Edit Data
 - **SQL sorguları**: Tools → Query Tool
 
+## 🗄️ Migration Sistemi
+
+### 📋 Migration Nedir?
+
+Migration sistemi, veritabanı şemasını güvenli ve kontrollü bir şekilde değiştirmek için kullanılır. Alembic kütüphanesi ile geliştirilmiştir.
+
+### 🚀 Hızlı Migration Komutları
+
+```bash
+# Migration durumunu kontrol et
+./migrate.sh current
+
+# Migration geçmişini gör
+./migrate.sh history
+
+# Yeni migration oluştur
+./migrate.sh create "Migration açıklaması"
+
+# Migration'ları uygula
+./migrate.sh upgrade
+
+# Migration'ı geri al
+./migrate.sh downgrade <revision_id>
+```
+
+### 📊 Mevcut Migration'lar
+
+1. **İlk Şema (355423c466cd)**
+   - `books` tablosu (kitaplar)
+   - `members` tablosu (üyeler)
+   - `users` tablosu (kullanıcılar)
+   - `loans` tablosu (ödünç verme)
+
+2. **Yaş Kolonu Ekleme (9c90999e7bf3)**
+   - `members` tablosuna `age` kolonu eklendi
+
+### 🔧 Migration Yönetimi
+
+#### Yeni Özellik Ekleme
+```bash
+# 1. Model'i güncelle (main.py)
+# 2. Migration oluştur
+./migrate.sh create "Add new feature"
+
+# 3. Migration'ı uygula
+./migrate.sh upgrade
+```
+
+#### Hata Durumunda Geri Alma
+```bash
+# Son migration'ı geri al
+./migrate.sh downgrade -1
+
+# Belirli bir versiyona geri dön
+./migrate.sh downgrade 355423c466cd
+```
+
+### 📚 Detaylı Dokümantasyon
+
+Migration sistemi hakkında detaylı bilgi için [MIGRATION_README.md](MIGRATION_README.md) dosyasını inceleyin.
+
+---
+
 ## 🛠️ Geliştirme
 
 ### Yerel Geliştirme
@@ -130,12 +193,21 @@ docker run -p 8082:8082 yb-library
 
 ```
 yb-library-postgresql/
-├── main.py              # Ana uygulama
-├── Dockerfile           # Docker imaj tanımı
-├── docker-compose.yml   # Container orchestration (PostgreSQL + pgAdmin + App)
-├── requirements.txt     # Python bağımlılıkları
-├── .dockerignore        # Docker build optimizasyonu
-└── README.md           # Bu dosya
+├── main.py                    # Ana uygulama
+├── Dockerfile                 # Docker imaj tanımı
+├── docker-compose.yml         # Container orchestration (PostgreSQL + pgAdmin + App)
+├── requirements.txt           # Python bağımlılıkları
+├── .dockerignore              # Docker build optimizasyonu
+├── migrate.sh                 # Migration yönetim script'i
+├── MIGRATION_README.md        # Detaylı migration dokümantasyonu
+├── migrations/                # Alembic migration dosyaları
+│   ├── alembic.ini           # Alembic konfigürasyonu
+│   ├── env.py                # Migration ortam ayarları
+│   ├── script.py.mako        # Migration template'i
+│   └── versions/             # Migration versiyonları
+│       ├── 355423c466cd_initial_database_schema.py
+│       └── 9c90999e7bf3_add_age_column_to_members_table.py
+└── README.md                 # Bu dosya
 ```
 
 ## 🔧 Docker Compose Komutları
